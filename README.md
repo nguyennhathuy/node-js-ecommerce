@@ -119,3 +119,29 @@ output: ra 1 token 'adsjfkhasdlfkhasldfj.adlskfjhasdlfue.adlkjfhsadlfkjhds'
 - 2 dấu chấm đầu thì mọi ng đều biết, vì đó là header và payload, dấu chấm sau thì ngta k biết vì đó là secret key
 - Tại vì sao chúng ta không được bỏ dữ liệu qtrong trong header và payload, vì họ có thể decode ra
 - Nếu ngta decode cái token đó thì cũng chỉ thấy header và payload, còn secretKey thì không thấy
+
+
+# PRODUCT
+- Product là trái tim của hệ thống eCommerce
+- Mỗi Product sẽ có đặc điểm chung và đặc điểm riêng
+- Đặc điểm chung như: name, giá, SP đã bán, hình ảnh, ...
+- Đặc điểm riêng như: Nước sản xuất, loại hàng hoá, ...
+- Chúng ta sử dụng Polymorphic Pattern để thiết kế Product cho hệ thống
+
+- Tại sao lại thiết kế riêng 1 collection trong database ?
+- Ví dụ client mong muốn tìm được những sản phẩm mà bán tốt nhất thì chẳng lẽ lại chia ra mỗi collection là 1 loại sản phẩm, giống như chúng ta có 3 loại: Quần áo, nội thất, điện tử (chúng ta chia 3 collections) - giả sử hệ thống muốn đưa ra các sản phẩm được bán chạy nhất trong tháng này - Thì sẽ phải sử lý rất phức tạp, móc từng collection ra rất mất công, quá tốn kém
+- Cho nên ngta đưa về 1 Product Collection
+
+- Nếu làm như vậy, thì 1 collection chứa đc bao nhiêu sản phẩm ? Trong 1 collection có thể chứa đc 100tr sản phẩm hay k, trong mongo hay k? - câu trả lời là có, yes
+- Trong 1 collection của MongoDB thì 1 Document giới hạn hiện tại chỉ 16MB, nếu document đó vượt quá 16MB thì nó sẽ không cho lưu nữa
+- MongoDB sẽ có 100 objects lồng nhau
+- Mongo được thiết kế để xử lý khối lượng dữ liệu lớn và có thể mở rộng theo chiều ngang hay chiều dọc để xử lý dữ liệu nhiều hơn, Tuy nhiên số lượng tài liệu tối đa có thể được lưu trữ trong 1 collection của mongo phụ thuộc vào nhiều yếu tố (kích thước của document, dung lượng bộ nhớ - nhưng mà theo mặc định mongo sử dụng công cụ lưu trữ "Quai-Tai" có kích thước tối đa là 32TB có thể lưu trữ hơn chục tỷ dữ liệu)
+
+- Như vậy tôi muốn lưu trữ 50tr sản phẩm trong mongoDB thì phần cứng của MongoDB ntn ?
+- Thật ra tài liệu MongoDB nói rất rõ, giả xử kích thước trung bình của 1 Document là 1 KB và mỗi document sản phẩm chứa tương đối đơn giản, thì chúng ta ước tính rằng Collection của chúng ta cần ít nhất 50GB dung lượng lưu trữ, Cứ cho là 50tr document mà nhân cho 1KB mỗi document, Do đó để lưu trữ 50tr documents thì chúng ta cần máy chủ ít nhát là 50GB.
+- MongoDB khuyến nghị cho chúng ta sử dụng máy chủ ít nhất 64GB để triển khai dữ liệu cho eCommerce
+
+- Chúng ta nên thiết kế 1 model, collection có những đặc điểm chung và đặc điểm riêng đưa vào key attributes
+- Chúng ta nên lưu tất cả ở 1 Product nhưng mà chúng ta cần phải tạo thêm thằng con để khi chúng ta đi vào chi tiết 1 danh mục, nó sẽ được load nhẹ hơn, load ok hơn 
+
+- Vào thực hành (phút 13:20)

@@ -18,11 +18,5 @@ router.use(apiKey);
 router.use(checkPermission('0000'));
 
 router.use('/v1/api', require('./access'));
-router.get('/', (req, res) => {
-    return res.status(200).json({
-        body: {
-            userId: 100,
-        }
-    });
-})
+router.use('/v1/api', require('./product'));
 module.exports = router;
