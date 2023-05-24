@@ -151,3 +151,13 @@ output: ra 1 token 'adsjfkhasdlfkhasldfj.adlskfjhasdlfue.adlkjfhsadlfkjhds'
 
 - PATCH
 - UpdateOne, muốn update cái gì thì cứ đưa vào thằng đó, PATCH tự giữ nguyên những thằng không đưa vào và thay đổi những thằng đưa vào
+
+
+- Trong CDSL eCommerce sử dụng trong mongoDB hoặc mySQL thì chúng ta biết rằng có 2 collection độc lập khác nhau đó là product và inventories (hàng tồn kho) v tại sao chúng lại độc lập với nhau và trong đó phải lưu những thông tin gì ?
+- Xin thưa với anh chị là, anh chị sẽ làm 1 collection chứa product bao nhiêu sản phẩm còn lại trong kho, nếu anh chị để nó trong product thì dĩ nhiên là sai - tại vì trong CSDL thương mại điện tử thì các collection product, inventories thường được tách biệt và chúng dại diện cho những dữ liệu khác nhau và phục vụ cho những mục đích khác nhau
+- Collection products là lưu trữ những thông tin về product mà doanh nghiệp và thương mai điện tử bán chẳng hạn như là (tên, giá, mô tả, hình ảnh và các chi tiết liên quan khác)
+- còn COLLECTION product thì thường được sử dụng để duyệt và tìm kiếm những sản phẩm có sẵn để mua và hiển thị các thông tin sản phẩm đó trên ứng dụng của chúng ta hoặc là trên website
+- Mặt khác, cái collection Inventories hay còn gọi là dữ liệu tồn kho, thì lưu trữ thông tin về mức tồn kho của từng sản phẩm, chẳng hạn như là số lượng đơn vị hiện có trong kho, vị trí các đơn vị đó và các thông tin liên quan, thì collection này được dùng để theo dõi và quản lý hàng tồn kho thực tế của 1 doanh nghiệp thương mai điện tử nhằm đảm bảo rằng các sản phẩm chỉ bán được khi chúng có sẳn trong kho mà thôi, thực tế hàng tồn kho này, công nợ cuối kỳ, công nợ đầu kỳ nó rất nhiều và phức tạp, nhưng chúng ta đơn giản chỉ lưu vào kho inventories
+- Việc tách riêng các COLLECTION này giúp chúng ta quản lý dữ liệu tốt hơn, và truy vấn hiệu quả hơn, vì mỗi bộ COLLECTION có thể tối ưu hoá cho một mục đích cụ thể của nó, ngoài ra nó cho phép linh hoạt hơn trong các thiết kế ứng dụng vì những thay đổi dối với 1 collection, ví dụ như cập nhật 1 chi tiết sản phẩm, thì nó sẽ k ảnh hưởng đến collection inventories của chúng ta 
+
+- Các anh chị lưu ý, trong cái mức độ hàng tồn kho, thì có sản phẩm rồi mới cho đặt hàng, hoặc là khi mà thanh toán rồi mới trừ trong sản phẩm

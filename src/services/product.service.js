@@ -14,6 +14,10 @@ const {
     findProduct,
 } = require('./repositories/product.repo');
 
+const {
+    insertInventory
+} = require('./repositories/inventory.repo');
+
 const { 
     removeUndefinedObject,
     updateNestedObjectParser
@@ -126,10 +130,23 @@ class Product {
         this.product_attributes = product_attributes
     }
     async createProduct(item_id) {
-        return await product.create({
+        const newProduct = await product.create({
             ...this,
             _id: item_id,
         });
+        if(newProduct) {
+            console.log('newProduct ::::::', {
+                productId: newProduct._id, 
+                stock: this.product_quantity, 
+                shopId: this.product_shop,
+            });
+            await insertInventory({
+                productId: newProduct._id, 
+                stock: this.product_quantity, 
+                shopId: this.product_shop,
+            });
+        };
+        return newProduct;
     }
 
     async updateProduct(productId, bodyUpdate) {
