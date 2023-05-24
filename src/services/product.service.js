@@ -2,14 +2,22 @@
 
 const {product, clothing, electronic } = require('../models/product.model');
 const { BadRequestError } = require('../core/error.response');
+
 const { 
     findAllDraftsForShop, 
     publishProductByShop,
     findAllPublishesForShop,
     unPublishProductByShop,
     searchProducts,
-    findAllProducts
+    findAllProducts,
+    updateProductById,
+    findProduct,
 } = require('./repositories/product.repo');
+
+const { 
+    removeUndefinedObject,
+    updateNestedObjectParser
+ } = require('../utils');
 
 // define factory class to create product
 //v1
@@ -46,18 +54,19 @@ class ProductFactory {
         return new productClass(payload).createProduct();
     }
     
-    static async updateProduct() {
+    static async updateProduct(type, payload) {
+        const productClass = ProductFactory.productRegistry[type];
+        if(!productClass) throw new BadRequestError(`Invalid product type ::: ${type}`);
 
+        return new productClass(payload).updateProduct(payload._id);
     }
 
     static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
         //limit để phân trang
         //nhược điểm của thằng scroll, khi ở trang thứ 3 chúng ta reload lại, chúng ta tìm kiếm 1 sản phẩm, tin tức nào đó cũng khó
         //cho nên phân trang nó tiện lợi vì sản phẩm ở trang thứ bao nhiêu thì nó chỉ nằm ở đó
-
         const query = { product_shop, isDraft: true };
         return await findAllDraftsForShop({ query, limit, skip });
-        
     }
 
     static async findAllPublishesForShop({ product_shop, limit = 50, skip = 0 }) {
@@ -76,7 +85,7 @@ class ProductFactory {
     static async searchProducts ({ keySearch }) {
         // search product chung ta danh cho user, cho nen khong can verify token, no chi co keyapi
         // Chi search nhung product ma da publish
-        return await searchProducts({ keySearch });
+        return await searchProducts(keySearch);
     }
 
     static async findAllProducts({
@@ -122,6 +131,10 @@ class Product {
             _id: item_id,
         });
     }
+
+    async updateProduct(productId, bodyUpdate) {
+        return updateProductById(productId, bodyUpdate, product);
+    }
 };
 
 // define sub-class for different product types Clothing
@@ -138,6 +151,16 @@ class Clothing extends Product{
 
         return newProduct;
     }
+
+    async updateProduct(productId) {
+        const updateNest = updateNestedObjectParser(this);
+        const objectParams = removeUndefinedObject(updateNest);
+        if (objectParams.product_attributes) {
+            updateProductById(productId, objectParams, clothing);
+        }
+        const updateProduct = await super.updateProduct(productId, objectParams);
+        return updateProduct;
+    }
 }
 
 // define sub-class for different product types Electronic
@@ -148,7 +171,7 @@ class Electronic extends Product{
 
         const newProduct = await super.createProduct()
         if (!newProduct) throw new BadRequestError('Create new product error');
-
+        
         return newProduct;
     }
 }

@@ -31,11 +31,11 @@ const productSchema = new Schema({
 
     // Mặc định tạo 1 product trong shopee là isCraft
     // select = false => find khong ra
-    isCraft: { type: Boolean, default: true, index: true, select: false },
+    isDraft: { type: Boolean, default: true, index: true, select: false },
     isPublished: { type: Boolean, default: false, index: true, select: false },
 
 }, {
-    collation: COLLECTION_NAME,
+    collection: COLLECTION_NAME,
     timestamps: true,
 });
 

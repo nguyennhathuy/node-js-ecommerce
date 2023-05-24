@@ -145,3 +145,9 @@ output: ra 1 token 'adsjfkhasdlfkhasldfj.adlskfjhasdlfue.adlkjfhsadlfkjhds'
 - Chúng ta nên lưu tất cả ở 1 Product nhưng mà chúng ta cần phải tạo thêm thằng con để khi chúng ta đi vào chi tiết 1 danh mục, nó sẽ được load nhẹ hơn, load ok hơn 
 
 - Vào thực hành (phút 13:20)
+
+- PUT
+- Có 2 cách use PUT, thứ nhất là dùng để tạo tài nguyên, sản phẩm mới. Nếu k có sản phẩm đó, tức là khi chúng ta đưa vào 1 object để mà tạo 1 spham, nếu nó không tìm thấy sản phẩm đó thì nó tạo mới và nếu như nó tìm được sản phẩm đó thì nó là update
+
+- PATCH
+- UpdateOne, muốn update cái gì thì cứ đưa vào thằng đó, PATCH tự giữ nguyên những thằng không đưa vào và thay đổi những thằng đưa vào

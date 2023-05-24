@@ -18,7 +18,7 @@ class ProductController {
 
     //{ product_shop, product_id }
     static publishProductByShop = async (req, res, next) => {
-        const newProduct = await ProductFactory.publishProductByShop({ product_shop: req.user.userId, product_shop: req.params.id });
+        const newProduct = await ProductFactory.publishProductByShop({ product_shop: req.user.userId, product_id: req.params.id });
         return new Success({
             message: 'Publish product success!',
             metadata: newProduct,
@@ -27,9 +27,22 @@ class ProductController {
     }
 
     static unPublishProductByShop = async (req, res, next) => {
-        const newProduct = await ProductFactory.unPublishProductByShop({ product_shop: req.user.userId, product_shop: req.params.id });
+        const newProduct = await ProductFactory.unPublishProductByShop({ product_shop: req.user.userId, product_id: req.params.id });
         return new Success({
             message: 'unpublish product success!',
+            metadata: newProduct,
+        }
+        ).send(res);
+    }
+
+    static updateProduct = async (req, res, next) => {
+        const newProduct = await ProductFactory.updateProduct(req.body.product_type, {
+            ...req.body,
+            product_shop: req.user.userId,
+            _id: req.params.id
+        });
+        return new Success({
+            message: 'Update product by Id success!',
             metadata: newProduct,
         }
         ).send(res);
@@ -80,7 +93,6 @@ class ProductController {
         }
         ).send(res);
     }
-
     // End Query
 }
 

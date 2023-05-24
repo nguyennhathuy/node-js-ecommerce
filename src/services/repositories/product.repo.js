@@ -5,8 +5,8 @@ const { Types } = require('mongoose');
 const { getSelectData, getUnselectData } = require('../../utils');
 
 const queryProduct = async ({ query, limit, skip }) => {
-    return await product.find(query).
-    populate('product_shop', 'name email -_id')
+    return await product.find(query)
+    .populate('product_shop', 'name email -_id')
     .skip(skip)
     .limit(limit)
     .lean()
@@ -14,17 +14,25 @@ const queryProduct = async ({ query, limit, skip }) => {
 }
 
 const findAllDraftsForShop = async ({ query, limit, skip }) => {
-    return await queryProduct({ query, limit, skip });
+    const convertQuery = {
+        ...query,
+        product_shop: new Types.ObjectId(query.product_shop),
+    }
+    return await queryProduct({ query: convertQuery, limit, skip });
 };
 
 const findAllPublishesForShop = async ({ query, limit, skip }) => {
-    return await queryProduct({ query, limit, skip });
+    const convertQuery = {
+        ...query,
+        product_shop: new Types.ObjectId(query.product_shop),
+    }
+    return await queryProduct({ query: convertQuery, limit, skip });
 }
 
 const publishProductByShop = async ({ product_shop, product_id }) => {
     const foundProduct = await product.findOne({
-        product_shop: Types.ObjectId(product_shop),
-        _id: Types.ObjectId(product_id),
+        product_shop: new Types.ObjectId(product_shop),
+        _id: new Types.ObjectId(product_id),
     });
     if (!foundProduct) return null;
 
@@ -32,15 +40,15 @@ const publishProductByShop = async ({ product_shop, product_id }) => {
     foundProduct.isPublished = true;
 
     //modifiedCount khi k có update thì return 0, còn có update return > 1
-    const { modifiedCount } = await foundProduct.update(foundProduct);
+    const { modifiedCount } = await foundProduct.updateOne(foundProduct);
 
     return modifiedCount;
 }
 
 const unPublishProductByShop = async ({ product_shop, product_id }) => {
     const foundProduct = await product.findOne({
-        product_shop: Types.ObjectId(product_shop),
-        _id: Types.ObjectId(product_id),
+        product_shop: new Types.ObjectId(product_shop),
+        _id: new Types.ObjectId(product_id),
     });
     if (!foundProduct) return null;
 
@@ -48,14 +56,16 @@ const unPublishProductByShop = async ({ product_shop, product_id }) => {
     foundProduct.isPublished = false;
 
     //modifiedCount khi k có update thì return 0, còn có update return > 1
-    const { modifiedCount } = await foundProduct.update(foundProduct);
+    const { modifiedCount } = await foundProduct.updateOne(foundProduct);
 
     return modifiedCount;
 }
 
-const searchProducts = async ({ keySearch }) => {
+const searchProducts = async (keySearch) => {
+    console.log('keySearch::::::::', keySearch);
     const regexSearch = new RegExp(keySearch);
-    const result = await product.find({ isPublished: true, $text: { $search: regexSearch } }, { score: { $meta: 'textScore' } })
+    const result = await product
+    .find({ isPublished: true, $text: { $search: regexSearch } }, { score: { $meta: 'textScore' } })
     .sort({ score: { $meta: 'textScore' } })
     .lean();
 
@@ -72,8 +82,15 @@ const findAllProducts = async ({ limit, sort, page, filter, select }) => {
 }
 
 const findProduct = async ({ product_id, unselect }) => {
-    return await product.findById(product_id).select(getUnselectData(unselect));
+    const filter = { _id: new Types.ObjectId(product_id), isPublished: true }
+    return await product.findOne(filter).select(getUnselectData(unselect)).lean();
 };
+
+const updateProductById = async (productId, bodyUpdate, model, isNew = true) => {
+    return await model.findByIdAndUpdate(productId, bodyUpdate, {
+        new: isNew
+    })
+}
 
 module.exports = {
     findAllDraftsForShop,
@@ -82,5 +99,6 @@ module.exports = {
     unPublishProductByShop,
     searchProducts,
     findAllProducts,
-    findProduct
+    findProduct,
+    updateProductById
 };
