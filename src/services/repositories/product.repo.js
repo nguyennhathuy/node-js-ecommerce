@@ -4,12 +4,13 @@ const { product, clothing, electronic } = require('../../models/product.model');
 const { Types } = require('mongoose');
 const { getSelectData, getUnselectData } = require('../../utils');
 
-const queryProduct = async ({ query, limit, skip }) => {
+const queryProduct = async ({ query, limit, skip, select }) => {
+    const convertSelect = getSelectData(select);
     return await product.find(query)
-    .populate('product_shop', 'name email -_id')
     .skip(skip)
     .limit(limit)
     .lean()
+    .select(convertSelect)
     .exec();
 }
 
@@ -21,12 +22,12 @@ const findAllDraftsForShop = async ({ query, limit, skip }) => {
     return await queryProduct({ query: convertQuery, limit, skip });
 };
 
-const findAllPublishesForShop = async ({ query, limit, skip }) => {
+const findAllPublishesForShop = async ({ query, limit, skip, select }) => {
     const convertQuery = {
         ...query,
         product_shop: new Types.ObjectId(query.product_shop),
     }
-    return await queryProduct({ query: convertQuery, limit, skip });
+    return await queryProduct({ query: convertQuery, limit, skip, select });
 }
 
 const publishProductByShop = async ({ product_shop, product_id }) => {
@@ -62,7 +63,6 @@ const unPublishProductByShop = async ({ product_shop, product_id }) => {
 }
 
 const searchProducts = async (keySearch) => {
-    console.log('keySearch::::::::', keySearch);
     const regexSearch = new RegExp(keySearch);
     const result = await product
     .find({ isPublished: true, $text: { $search: regexSearch } }, { score: { $meta: 'textScore' } })

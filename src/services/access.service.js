@@ -66,14 +66,14 @@ class AccessService {
             $addToSet: {
                 refreshTokenUsed: refreshToken,
             }
-        })
+        });
 
         return {
             user: {
                 userId, email,
             },
             tokens,
-        }
+        };
     }
 
     static handlerRefreshTokenV2 = async (param) => {

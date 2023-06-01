@@ -161,3 +161,34 @@ output: ra 1 token 'adsjfkhasdlfkhasldfj.adlskfjhasdlfue.adlkjfhsadlfkjhds'
 - Việc tách riêng các COLLECTION này giúp chúng ta quản lý dữ liệu tốt hơn, và truy vấn hiệu quả hơn, vì mỗi bộ COLLECTION có thể tối ưu hoá cho một mục đích cụ thể của nó, ngoài ra nó cho phép linh hoạt hơn trong các thiết kế ứng dụng vì những thay đổi dối với 1 collection, ví dụ như cập nhật 1 chi tiết sản phẩm, thì nó sẽ k ảnh hưởng đến collection inventories của chúng ta 
 
 - Các anh chị lưu ý, trong cái mức độ hàng tồn kho, thì có sản phẩm rồi mới cho đặt hàng, hoặc là khi mà thanh toán rồi mới trừ trong sản phẩm
+
+
+- Nếu như đang làm product thì chúng ta nên thiết kế discount trước, rồi hãy đến inventory, vì discount nó đi theo cái product rất nhiều, tại vì liên quan với nhau, còn inventory, order, giỏ hàng ... thì nó sẽ liên quan mật thiết với nhau
+
+- DISCOUNT
+- 1 Shop tạo 1 voucher khác mà Admin (shopee) tạp 1 voucher là khác nữa
+
+
+- DISCOUNT SERVICE
+- Generator discount code SHOP || ADMIN
+- Get all discount codes  USER || SHOP
+- Get all product by discount code USER
+- Get discount amount User
+- Delete discount code ADMIN || SHOP
+- Cancel discount code USER
+
+
+
+- Mongo shell, mongoSH cung cấp 1 bộ câu lệnh để sử dụng trong mongoDB và được sử dụng hoàn toàn trên commandLine, nó không trực quan và khó quan sát
+- Nên compass và robo3T ra đời để sử dụng những câu lệnh trong mongoDB 1 cách trực quan, dễ quan sát DB
+-Mongo server để biến laptop, máy tính của chúng ta thành DB
+- Mongoose là 1 npm chuyên để tương tác với mongoDB bằng những câu lệnh JS
+
+- method create mà truyền vào k đúng Schema thì sao ? 
+- test case sai tên key, test case thừa key, test case thiếu key
+
+- method của collection updateOne, updateMany, deleteOne, deleteMany sẽ find xong rồi xử lý
+- method của document ?
+
+
+- populate trong mongoose là để hiển thị những document được ref ở key của document khác

@@ -75,7 +75,7 @@ class ProductFactory {
 
     static async findAllPublishesForShop({ product_shop, limit = 50, skip = 0 }) {
         const query = { product_shop, isPublished: true };
-        return await findAllPublishesForShop({ query, limit, skip });
+        return await findAllPublishesForShop({ query, limit, skip, select: ['product_shop', 'product_name', 'product_price', 'product_thumb'] });
     }
 
     static async publishProductByShop({ product_shop, product_id }) {
